@@ -28,6 +28,7 @@
 
 <script>
 import { login } from '@/api/permission'
+import axios from "axios"
 export default {
     data() {
         const validateUsername = (rule, value, callback) => {
@@ -54,11 +55,14 @@ export default {
                     {
                         required: true,
                         trigger: 'blur',
-                        validator: validateUsername
+                        // validator: validateUsername
                     }
                 ],
                 password: [
-                    { required: true, trigger: 'blur', validator: validatePass }
+                    { required: true,
+                    trigger: 'blur',
+                    // validator: validatePass ,
+                    }
                 ]
             },
             loading: false,

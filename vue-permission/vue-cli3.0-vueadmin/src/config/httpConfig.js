@@ -102,6 +102,9 @@ http.get = function(url, options) {
 }
 
 http.post = function(url, data, options) {
+    console.log(url)
+    console.log(data)
+    console.log(options)
     let loading
     if (!options || options.isShowLoading !== false) {
         loading = document.getElementById('ajaxLoading')
