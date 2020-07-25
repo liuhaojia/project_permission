@@ -46,7 +46,9 @@ instance.interceptors.request.use(
     function(config) {
         // 请求头添加token
         if (store.state.UserToken) {
-            config.headers.Authorization = `Bearer ${store.state.UserToken}`
+            config.headers.Authorization = `${store.state.UserToken}`
+            console.log("config")
+            console.log(config)
         }
         return config
     },
@@ -73,6 +75,7 @@ instance.interceptors.response.use(
 )
 
 http.get = function(url, options) {
+    console.log(url)
     let loading
     if (!options || options.isShowLoading !== false) {
         loading = document.getElementById('ajaxLoading')
@@ -86,6 +89,8 @@ http.get = function(url, options) {
                     loading = document.getElementById('ajaxLoading')
                     loading.style.display = 'none'
                 }
+                console.log(response.data)
+                console.log(response.data.roles)
                 if (response.code === 1) {
                     resolve(response.data)
                 } else {
