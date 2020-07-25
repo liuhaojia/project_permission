@@ -46,7 +46,8 @@ instance.interceptors.request.use(
     function(config) {
         // 请求头添加token
         if (store.state.UserToken) {
-            config.headers.Authorization = `${store.state.UserToken}`
+            // config.headers.Authorization = `${store.state.UserToken}`
+            config.headers.Authorization = `Bearer ${store.state.UserToken}`
             console.log("config")
             console.log(config)
         }
