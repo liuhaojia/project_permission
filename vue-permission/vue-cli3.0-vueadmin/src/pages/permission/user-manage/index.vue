@@ -51,7 +51,7 @@
           min-width="120">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="realName"
           label="真实姓名"
           min-width="120">
         </el-table-column>
@@ -129,8 +129,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="真实姓名" prop="name">
-              <el-input v-model="dataForm.name" placeholder="真实姓名"></el-input>
+        <el-form-item label="真实姓名" prop="realName">
+              <el-input v-model="dataForm.realName" placeholder="真实姓名"></el-input>
             </el-form-item>
             <el-form-item label="联系电话" prop="mobile">
               <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
@@ -189,7 +189,7 @@ export default {
                         trigger: 'blur'
                     }
                 ],
-                name: [
+                realName: [
                     {
                         required: true,
                         message: '真实姓名不能为空',
@@ -235,7 +235,7 @@ export default {
                 loginName: '',
                 tempRoleIds: [],
                 roleIds: '',
-                name: '',
+                realName: '',
                 mobile: '',
                 address: '',
                 email: ''

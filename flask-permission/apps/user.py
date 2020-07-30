@@ -52,7 +52,7 @@ def login():
 
         # 将用户名和加密后的密码去数据库查询
         user = db.session.query(User).filter(and_(
-            User.username == username,
+            User.loginName == username,
             User.password == password
         )).first()
         # 查询角色
@@ -112,3 +112,39 @@ def info():
         }
     else:
         return "登录失败"
+
+
+# 获取用户列表
+@user_dp.route('/list', methods=["GET"])
+def get():
+    """
+    从数据库中获取数据
+    """
+    # todo 分页查询，按姓名模糊查询
+    # 多表操作 使用原生sql查询
+    user_list = db.session.execute("SELECT u.*,r.id as rid, r.roleName FROM tab_user_role ur inner join tab_user u on ur.user_id=u.id INNER join tab_role r on ur.role_id=r.id")
+
+    # user_list = User.query.all()
+    user_list_dict = []
+    for user in user_list:
+        user_list_dict.append(
+            {
+                'id': user.id,
+                'loginName': user.loginName,
+                'address': user.address,
+                'email': user.email,
+                'status': user.status,
+                'realName': user.realName,
+                'mobile': user.mobile,
+                'lastLoginTime': user.lastLoginTime,
+                "erpMemberRoles": [{
+                    "id": user.rid,
+                    "roleName": user.roleName
+                }]
+            }
+        )
+
+    return {
+        "code": 1,
+        "data": user_list_dict
+    }

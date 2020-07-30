@@ -7,22 +7,28 @@ class User(db.Model):
     __tablename__ = 'tab_user'
     # 定义字段
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)    # 用户编号
-    username = db.Column(db.String(32))     # 用户名
-    password = db.Column(db.String(32))     # 密码
-    gender = db.Column(db.String(32))       # 性别
-    birthday = db.Column(db.Date)           # 生日
-    remark = db.Column(db.String(32))       # 备注
+    loginName = db.Column(db.String(32))    # 登录名
+    password = db.Column(db.String(32))    #密码
+    realName = db.Column(db.String(32))     # 真实姓名
+    mobile = db.Column(db.String(11))
+    address = db.Column(db.String(255))
+    email = db.Column(db.String(32))
+    lastLoginTime = db.Column(db.Date)
+    status = db.Column(db.Integer)
     role = db.relationship('Role', backref='user', secondary='tab_user_role')   # 关联角色表
 
     # 将数据转换成 json 格式
     def to_json(self):
         data_json = {
             "id": self.id,
-            "username": self.username,
+            "loginName": self.loginName,
             "password": self.password,
-            "gender": self.gender,
-            "birthday": self.birthday,
-            "remark": self.remark
+            "realName": self.realName,
+            "mobile": self.mobile,
+            "address": self.address,
+            "email": self.email,
+            "lastLoginTime": self.lastLoginTime,
+            "status": self.status
         }
         return data_json
 

@@ -80,12 +80,15 @@ create table tab_role_permission
 create table tab_user
 (
    id                   int not null auto_increment,
-   username             nvarchar(32),
+   loginName            nvarchar(32),
    password             nvarchar(32),
-   gender               nvarchar(32),
-   birthday             date,
-   telephone            nvarchar(11),
-   remark               nvarchar(32),
+   name                 nvarchar(32),
+   realName             nvarchar(32),
+   mobile               nvarchar(11),
+   address              nvarchar(255),
+   email                nvarchar(32),
+   lastLoginTime        date,
+   status               int,
    primary key (id)
 );
 
