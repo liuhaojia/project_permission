@@ -122,7 +122,7 @@ def get():
     """
     # todo 分页查询，按姓名模糊查询
     # 多表操作 使用原生sql查询
-    user_list = db.session.execute("SELECT u.*,r.id as rid, r.roleName FROM tab_user_role ur inner join tab_user u on ur.user_id=u.id INNER join tab_role r on ur.role_id=r.id")
+    user_list = db.session.execute("SELECT u.*,r.id as rid, r.roleName FROM tab_user_role ur right join tab_user u on ur.user_id=u.id left join tab_role r on ur.role_id=r.id")
 
     # user_list = User.query.all()
     user_list_dict = []
@@ -138,8 +138,8 @@ def get():
                 'mobile': user.mobile,
                 'lastLoginTime': user.lastLoginTime,
                 "erpMemberRoles": [{
-                    "id": user.rid,
-                    "roleName": user.roleName
+                    "id": user.rid or "Null" ,
+                    "roleName": user.roleName or "Null"
                 }]
             }
         )
@@ -148,3 +148,23 @@ def get():
         "code": 1,
         "data": user_list_dict
     }
+
+# 重置密码
+@user_dp.route('/reset', methods=["POST"])
+def resetPwd():
+    uid = request.json['id']
+    print(uid)
+    # todo 可以先查询密码是否已经是初始密码
+    res = db.session.query(User).filter(User.id == uid).update({"password": "e10adc3949ba59abbe56e057f20f883e"})
+    db.session.commit()
+    db.session.close()
+    if res:
+        return {
+            "code": 1,
+            "msg": "初始化完成"
+        }
+    else:
+        return {
+            "code": 0,
+            "msg": "请稍后重试"
+        }

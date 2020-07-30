@@ -126,6 +126,9 @@ http.post = function(url, data, options) {
                 }
                 if (response.code === 1) {
                     resolve(response.data)
+                    Message.success({
+                        message: response.msg
+                    })
                 } else {
                     Message.error({
                         message: response.msg

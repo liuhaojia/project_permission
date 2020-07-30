@@ -27,3 +27,8 @@ export function getNextLevel(id) {
 export function login(data) {
     return axios.post('/user/login', data)
 }
+
+// 重置密码
+export function resetPwd(id) {
+    return axios.post('/user/reset',{"id": id})
+}

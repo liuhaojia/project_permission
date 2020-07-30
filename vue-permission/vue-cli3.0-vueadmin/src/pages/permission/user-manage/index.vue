@@ -152,11 +152,13 @@
 </template>
 <script>
 import { getUserList } from '@/api/permission'
+import { resetPwd } from '@/api/permission'
+import { Message } from 'element-ui'
 import moment from 'moment'
 export default {
     data() {
         return {
-            totalRecord: 0,
+            totalRecord:0,
             pageSize: 10,
             tableLoading: false,
             dialogVisible: false,
@@ -251,7 +253,9 @@ export default {
             const data = await getUserList()
             this.tableData = data
         },
-        handleStatus(row) {},
+        handleStatus(row) {
+          console.log(row.status)
+        },
         statusFormat(row, column, cellValue) {
             return { '0': '停用', '1': '启用' }[cellValue] || ''
         },
@@ -293,7 +297,9 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(() => {})
+            }).then(() => {
+              let data =  resetPwd(row.id)
+            })
         },
         handleEdit(index, row) {
             this.dialogVisible = true
