@@ -96,7 +96,7 @@
     <el-button
       type="text"
       size="small"
-      @click="handleResetPwd(scope.$index, scope.row)"
+      @click="handleResetPwd(scope.$index, scope.row) "
     >重置密码</el-button>
   </div>
 </template>
@@ -151,8 +151,7 @@
   </el-card>
 </template>
 <script>
-import { getUserList } from '@/api/permission'
-import { resetPwd } from '@/api/permission'
+import { getUserList,resetPwd,createUser } from '@/api/permission'
 import { Message } from 'element-ui'
 import moment from 'moment'
 export default {
@@ -165,6 +164,7 @@ export default {
             dialogTitle: '新增用户',
             roles: [
                 {
+                  // todo 动态查询角色
                     id: 1,
                     roleName: '超级管理员'
                 },
@@ -298,7 +298,8 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-              let data =  resetPwd(row.id)
+              // 重置密码请求
+              resetPwd(row.id)
             })
         },
         handleEdit(index, row) {
@@ -319,7 +320,25 @@ export default {
                 }
             }
         },
-        onDialogSubmit() {}
+        onDialogSubmit() {
+          this.dataForm.rules
+          // 修改和添加
+          console.log(this.dataForm)
+          if (this.dataForm.id!="") {
+             this.$message({
+                 message: '这是更改操作',
+                 type: 'success'
+             });
+          }else{
+            // todo 应该先验证数据合法性再做提交
+            // 这里是直接点击按钮就发送请求了
+            createUser(this.dataForm)
+             this.$message({
+                  message: '新建',
+                  type: 'success'
+            })
+          }
+        }
     }
 }
 </script>

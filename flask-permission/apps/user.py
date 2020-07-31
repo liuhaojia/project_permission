@@ -1,10 +1,12 @@
 from apps import db
-from orm.model import User, Role, tab_user_role
+from orm.model import User
 from utils import MD5Util
 from flask import Blueprint, request, make_response, jsonify, current_app, app
 from sqlalchemy import or_, and_
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import session, Response
+from sqlalchemy.sql import exists
+import datetime
 
 # 创建一个蓝图，蓝图名称 user，前缀 /user
 user_dp = Blueprint("user", __name__, url_prefix="/user")
@@ -68,7 +70,7 @@ def login():
             # result["data"] = user.to_json()
             result["data"] = data
             result["code"] = 1
-        else:   # 登录失败
+        else:  # 登录失败
             result["flag"] = False
             result["msg"] = "登录失败123"
 
@@ -104,7 +106,7 @@ def info():
             "avatar": "https://randy168.com/1533262153771.gif",
             "roles": ["admin", ],
             "data": ["order-manage", "order-list", "product-manage", "product-list", "review-manage", "return-goods",
-                     "goods", "goods-list",  "goods-classify", "permission", "user-manage", "role-manage", "menu-manage"]
+                     "goods", "goods-list", "goods-classify", "permission", "user-manage", "role-manage", "menu-manage"]
         }
         return {
             "code": 1,
@@ -122,7 +124,8 @@ def get():
     """
     # todo 分页查询，按姓名模糊查询
     # 多表操作 使用原生sql查询
-    user_list = db.session.execute("SELECT u.*,r.id as rid, r.roleName FROM tab_user_role ur right join tab_user u on ur.user_id=u.id left join tab_role r on ur.role_id=r.id")
+    user_list = db.session.execute(
+        "SELECT u.*,r.id as rid, r.displayName FROM tab_user_role ur right join tab_user u on ur.user_id=u.id left join tab_role r on ur.role_id=r.id")
 
     # user_list = User.query.all()
     user_list_dict = []
@@ -138,8 +141,8 @@ def get():
                 'mobile': user.mobile,
                 'lastLoginTime': user.lastLoginTime,
                 "erpMemberRoles": [{
-                    "id": user.rid or "Null" ,
-                    "roleName": user.roleName or "Null"
+                    "id": user.rid or "Null",
+                    "roleName": user.displayName or "未分配权限"
                 }]
             }
         )
@@ -148,6 +151,7 @@ def get():
         "code": 1,
         "data": user_list_dict
     }
+
 
 # 重置密码
 @user_dp.route('/reset', methods=["POST"])
@@ -167,4 +171,51 @@ def resetPwd():
         return {
             "code": 0,
             "msg": "请稍后重试"
+        }
+
+
+# 创建用户
+@user_dp.route('/create', methods=["POST"])
+def createUser():
+    '''
+    创建用户的接口
+    :return:
+    '''
+
+    # 获取数据
+    data = request.json["data"]
+    print(data)
+    # 判断登录名是否存在
+    obj = db.session.query(exists().where(User.loginName == data['loginName'])).scalar()
+    if obj:
+        return{
+            "code": 0,
+            "msg": "登录名已存在"
+        }
+    else:
+        user = User(
+            loginName=data['loginName'],
+            password="e10adc3949ba59abbe56e057f20f883e",
+            realName=data['realName'],
+            mobile=data['mobile'],
+            address=data['address'],
+            email=data['email'],
+            lastLoginTime=datetime.datetime.now(),
+            status=1,  # 默认启用
+        )
+
+        for rid in data["tempRoleIds"]:
+            user.role.append(rid)
+        db.session.add(user)
+        db.session.flush()
+        # db.session.commit()
+        # 输出新插入数据的主键
+        print(user.id)
+        print(data["tempRoleIds"][0])
+
+        # urole=tab_user_role(tab_user_role.userid=user.id,data["tempRoleIds"])
+        # print(urole)
+        return {
+            "code": 1,
+            "msg": "创建成功,初始密码:123456"
         }

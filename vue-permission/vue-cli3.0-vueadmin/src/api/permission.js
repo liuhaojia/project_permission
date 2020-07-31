@@ -32,3 +32,7 @@ export function login(data) {
 export function resetPwd(id) {
     return axios.post('/user/reset',{"id": id})
 }
+
+export function createUser(data) {
+    return axios.post('/user/create',{"data": data})
+}
